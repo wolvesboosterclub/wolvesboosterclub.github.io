@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Broadway Engraved Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: url("/holiday_party/fonts/broadway_engraved_regular/broadway_engraved_regular.otf") format("opentype");
+}
+
+.broadway-text {
+    font-family: 'Broadway Engraved Regular';
+}
+
+html, body {
+    @apply bg-neutral-950 h-full;
+}
