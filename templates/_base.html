@@ -1,0 +1,40 @@
+{% set url = 'https://wolvesboosterclub.org' %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}{% endblock %} | Wolves Booster Club</title>
+    <meta charset="UTF-8">
+	<meta name="author" content="Wolves Booster Club">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="og:title" content="{{ self.title() }}" />
+
+	<meta name="description" content="{% block header_description %}{% endblock %}">
+	<meta name="keywords" content="{% block header_keywords %}{% endblock %}">
+
+	<meta property="og:url" content="{{ url }}{% block header_url %}{% endblock %}" />
+	<meta property="og:image"
+		content="{{ url }}{% block header_prev_image %}{% endblock %}" />
+	<!-- Include this to make the og:image larger -->
+	<meta property="og:description"
+		content="{{ self.header_description() }}" />
+	<meta name="theme-color" content="{% block header_prev_color %}{% endblock %}" />
+
+	<link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/css/index.css"/>
+
+    {% block extra_css %}{% endblock %}
+    {% block header_js %}{% endblock %}
+
+</head>
+<body class="flex flex-col">
+    {% include "partials/_header.html" %}
+    {% block body %}{% endblock %}
+    {% include "partials/_footer.html" %}
+
+    {% block footer_js %}{% endblock %}
+</body>
+</html>

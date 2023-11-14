@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./*.html"],
+  content: [
+    "./*.html",
+    "./holiday_party/*.html"
+  ],
   theme: {
     extend: {
       boxShadow: {

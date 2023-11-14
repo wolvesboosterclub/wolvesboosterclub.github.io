@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+html, body {
+    @apply bg-neutral-950 h-full;
+}
+
 @font-face {
     font-family: 'Broadway Engraved Regular';
     font-style: normal;
@@ -11,8 +16,4 @@
 
 .broadway-text {
     font-family: 'Broadway Engraved Regular';
-}
-
-html, body {
-    @apply bg-neutral-950 h-full;
 }
