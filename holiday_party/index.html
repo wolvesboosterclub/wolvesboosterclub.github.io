@@ -91,7 +91,7 @@
         </table>
         
 
-        <form id="contact_us_form" class="flex-grow" method="POST">
+        <form action="https://contact_us.wolvesboosterclub.org/contact" id="contact_us_form" class="flex-grow" method="POST">
             <p class="font-medium mb-2">Contact Us</p>
 
             <p id="contact_us_error" class="font-light text-red-500 hidden">This is not available right now, try again later.</p>
@@ -108,7 +108,7 @@
                     <label for="contact_us_message" class="peer-disabled:opacity-25 absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0  peer-valid:text-blue-500 peer-[:not(:placeholder-shown)]:peer-invalid:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Message</label>
                 </div> 
            
-                <button class="disabled:opacity-25 bg-sky-700 text-neutral-200 rounded-md flex-shrink px-4 py-1">Send</button>
+                <button class="disabled:opacity-25 bg-sky-700 hover:bg-sky-600 text-neutral-200 rounded-md flex-shrink px-4 py-1">Send</button>
             </div>
         </form>
     </div>
@@ -152,9 +152,14 @@
 		});
 
 		document.addEventListener("DOMContentLoaded", (event) => {
-			fetch("https://contact_us.wolvesboosterclub.org/csrf")
-			.then(response => response.text())
-			.then(content => {
+			fetch("https://contact_us.wolvesboosterclub.org/contact")
+			.then((response) => {
+				if (response.ok) {
+					return response.text();
+				}
+				throw new Error('Could not get csrf token');
+			})
+			.then((content) => {
 				var csrf_input = document.getElementById("contact_us_csrf");
 				csrf_input.value = content;
 			})
@@ -165,7 +170,7 @@
 					elements[i].disabled = true;
 				}
 				var contact_us_error = document.getElementById("contact_us_error");
-				contact_us_error.classList.toggle("hidden");
+				contact_us_error.classList.remove("hidden");
 			});
 		});
 

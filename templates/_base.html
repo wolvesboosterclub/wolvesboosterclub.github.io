@@ -70,9 +70,14 @@
 		});
 
 		document.addEventListener("DOMContentLoaded", (event) => {
-			fetch("https://contact_us.{{ domain }}/csrf")
-			.then(response => response.text())
-			.then(content => {
+			fetch("https://contact_us.{{ domain }}/contact")
+			.then((response) => {
+				if (response.ok) {
+					return response.text();
+				}
+				throw new Error('Could not get csrf token');
+			})
+			.then((content) => {
 				var csrf_input = document.getElementById("contact_us_csrf");
 				csrf_input.value = content;
 			})
@@ -83,7 +88,7 @@
 					elements[i].disabled = true;
 				}
 				var contact_us_error = document.getElementById("contact_us_error");
-				contact_us_error.classList.toggle("hidden");
+				contact_us_error.classList.remove("hidden");
 			});
 		});
 
