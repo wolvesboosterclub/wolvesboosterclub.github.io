@@ -93,3 +93,14 @@ Do not forget to minify the tailwindcss outputs with the `-m` switch. The file s
 # vs.
 -rw-rw-r-- 1 subcursion subcursion 5893 Nov 14 17:56 ./css/index.css
 ```
+
+When testing locally, the contact us portion of the footer will not work correctly. This is due to the current implementation of the application listening for requests from the form being hardened. In order to bypass this security restriction temporarily, I would suggest using this (or similar) extension:
+https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/
+I then configured it to whitelist my local IP address so that the browser does not try to enforce the security while I am testing. DO NOT enable this extension globally as it disables a vital security feature HTTP made called Access-Control-Allow-Origin (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin).
+Go to `about:addons` and into Options for CORS Everywhere and add something like this to the whitelist:
+
+```
+/^http(s)?://10.0.0.4(:\d+)?.*/i
+```
+
+Where 10.0.0.4 is your IP of the machine running the Python3 http server locally, and save.

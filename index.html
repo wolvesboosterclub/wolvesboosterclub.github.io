@@ -37,8 +37,8 @@
         <span class="bg-gray-300 w-6 h-1 rounded-full"></span>
     </div>
     <a href="/" class="flex-shrink-0 w-[70px] mr-4"><img src="/images/booster_club_logo_transparent.png" alt="Wolves Booster Club Logo"/></a>
-    <a href="/news/" class="text-neutral-300 text-2xl hidden lg:inline font-medium" >News</a>
-    <a href="/events/" class="text-neutral-300 text-2xl hidden lg:inline font-medium">Events</a>
+    <a href="/" class="text-neutral-300 text-2xl hidden lg:inline font-medium" >News</a>
+    <a href="/" class="text-neutral-300 text-2xl hidden lg:inline font-medium">Events</a>
     <p class="flex flex-grow"></p>
     <a href="/holiday_party/" class="broadway-text text-lg text-yellow-600 tracking-widest shadow-yellow-600 hover:drop-shadow-glow transition">
         Holiday Party
@@ -84,12 +84,12 @@
 
 
 	</div>
-    <footer class="bg-neutral-800 p-5 flex flex-col flex-wrap shadow-up-lg shadow-black z-10 gap-5">
-    <div class="flex flex-col lg:flex-row gap-5">
-        <table class="table-auto min-w-[33vw] text-gray-400 [&_td:last-child]:text-right [&_tr]:border-b-2 [&_tr]:border-gray-700">
+    <footer class="bg-neutral-800 p-5 flex flex-col flex-wrap items-center shadow-up-lg shadow-black z-10 gap-5">
+    <div class="flex flex-col lg:flex-row gap-10 lg:gap-40">
+        <table class="table-auto lg:w-[400px]  text-gray-400 [&_td:last-child]:text-right [&_tr]:border-b-2 [&_tr]:border-gray-700">
             <thead>
                 <tr>
-                    <th colspan=2 class="font-medium">Council Members</th>
+                    <th colspan=2 class="font-medium text-left">Council Members</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,8 +112,26 @@
             </tbody>
         </table>
         
-        <form class="flex-grow" action="/csrf" method="POST">
-            <input type="hidden" name="csrf_token" value=""/>
+
+        <form id="contact_us_form" class="flex-grow" method="POST">
+            <p class="font-medium mb-2">Contact Us</p>
+
+            <p id="contact_us_error" class="font-light text-red-500 hidden">This is not available right now, try again later.</p>
+
+            <input id="contact_us_csrf" type="hidden" name="csrf_token" value=""/>
+            
+            <div class="flex flex-col gap-4 items-start">
+               <div class="relative z-0 self-stretch">
+                    <input required type="email" name="contact_us_email" class="disabled:opacity-25 self-stretch block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-600 valid:border-blue-500 [&:not(:placeholder-shown)]:invalid:border-red-500 focus:outline-none focus:ring-0 peer" placeholder=" " />
+                    <label for="contact_us_email" class="peer-disabled:opacity-25 absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0  peer-valid:text-blue-500 peer-[:not(:placeholder-shown)]:peer-invalid:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Email</label>
+                </div> 
+                <div class="relative z-0">
+                    <textarea required type="text" rows="3" cols="40" name="contact_us_message" class="disabled:opacity-25 resize-none block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-600 valid:border-blue-500 [&:not(:placeholder-shown)]:invalid:border-red-500 focus:outline-none focus:ring-0 peer" placeholder=" " ></textarea>
+                    <label for="contact_us_message" class="peer-disabled:opacity-25 absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0  peer-valid:text-blue-500 peer-[:not(:placeholder-shown)]:peer-invalid:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Message</label>
+                </div> 
+           
+                <button class="disabled:opacity-25 bg-sky-700 text-neutral-200 rounded-md flex-shrink px-4 py-1">Send</button>
+            </div>
         </form>
     </div>
     <p class="font-thin text-base text-center">
@@ -127,6 +145,7 @@
 		var navbarDropdown = document.getElementById("nav-bar-dropdown");
 		var navbarDropdownHeight = navbarDropdown.offsetHeight;
 		var navbarDropdownShown = false;
+		var contact_us_form = document.getElementById("contact_us_form");
 
 		navbarDropdown.style.maxHeight = "0px";
 
@@ -156,8 +175,25 @@
 
 		document.addEventListener("DOMContentLoaded", (event) => {
 			fetch("https://contact_us.wolvesboosterclub.org/csrf")
-			.then(response => console.log(response.text))
-			.catch(error => console.error(error));
+			.then(response => response.text())
+			.then(content => {
+				var csrf_input = document.getElementById("contact_us_csrf");
+				csrf_input.value = content;
+			})
+			.catch(error => {
+				console.log(error);
+				var elements = contact_us_form.elements;
+				for (var i = 0, len = elements.length; i < len; i++) {
+					elements[i].disabled = true;
+				}
+				var contact_us_error = document.getElementById("contact_us_error");
+				contact_us_error.classList.toggle("hidden");
+			});
+		});
+
+		contact_us_form.addEventListener("submit", (event) => {
+			console.log("submitted");
+			event.preventDefault();
 		});
 	</script>
 

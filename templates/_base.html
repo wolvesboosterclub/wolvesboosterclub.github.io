@@ -41,6 +41,7 @@
 		var navbarDropdown = document.getElementById("nav-bar-dropdown");
 		var navbarDropdownHeight = navbarDropdown.offsetHeight;
 		var navbarDropdownShown = false;
+		var contact_us_form = document.getElementById("contact_us_form");
 
 		navbarDropdown.style.maxHeight = "0px";
 
@@ -70,8 +71,25 @@
 
 		document.addEventListener("DOMContentLoaded", (event) => {
 			fetch("https://contact_us.{{ domain }}/csrf")
-			.then(response => console.log(response.text))
-			.catch(error => console.error(error));
+			.then(response => response.text())
+			.then(content => {
+				var csrf_input = document.getElementById("contact_us_csrf");
+				csrf_input.value = content;
+			})
+			.catch(error => {
+				console.log(error);
+				var elements = contact_us_form.elements;
+				for (var i = 0, len = elements.length; i < len; i++) {
+					elements[i].disabled = true;
+				}
+				var contact_us_error = document.getElementById("contact_us_error");
+				contact_us_error.classList.toggle("hidden");
+			});
+		});
+
+		contact_us_form.addEventListener("submit", (event) => {
+			console.log("submitted");
+			event.preventDefault();
 		});
 	</script>
 
