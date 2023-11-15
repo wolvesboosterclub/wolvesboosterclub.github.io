@@ -1,5 +1,37 @@
-<footer class="bg-neutral-700 p-5 flex-grow flex items-center justify-center shadow-up-lg shadow-black z-10">
-    <p class="text-slate-200 text-base text-center pb-8">
-        All content is used soley for personal and/or the Wolves Booster Club and is not usable outside these contexts without written permission.
+<footer class="bg-neutral-800 p-5 flex flex-col flex-wrap shadow-up-lg shadow-black z-10 gap-5">
+    <div class="flex flex-col lg:flex-row gap-5">
+        <table class="table-auto min-w-[33vw] text-gray-400 [&_td:last-child]:text-right [&_tr]:border-b-2 [&_tr]:border-gray-700">
+            <thead>
+                <tr>
+                    <th colspan=2 class="font-medium">Council Members</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>President</td>
+                    <td>Naomi Manley</td>
+                </tr>
+                <tr>
+                    <td>Vice President</td> 
+                    <td>Justin Boone</td>
+                </tr>
+                <tr>
+                    <td>Secretary</td>
+                    <td>Lee</td>
+                </tr>
+                <tr>
+                    <td>Treasurer</td>
+                    <td>UNK</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <form class="flex-grow" action="/csrf" method="POST">
+            <input type="hidden" name="csrf_token" value=""/>
+        </form>
+    </div>
+    <p class="font-thin text-base text-center">
+        All content is used soley for the Wolves Booster Club and is not usable outside these contexts without written permission.
     </p>
+    
 </footer>

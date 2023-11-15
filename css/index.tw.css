@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-
 html, body {
-    @apply bg-neutral-950 h-full;
+    @apply bg-neutral-900 h-full;
+}
+
+* {
+    font-family: "Josefin Sans", sans-serif;
+    @apply font-light text-gray-300;
 }
 
 @font-face {
@@ -13,6 +17,7 @@ html, body {
     font-weight: normal;
     src: url("/holiday_party/fonts/broadway_engraved_regular/broadway_engraved_regular.otf") format("opentype");
 }
+
 
 .broadway-text {
     font-family: 'Broadway Engraved Regular';
