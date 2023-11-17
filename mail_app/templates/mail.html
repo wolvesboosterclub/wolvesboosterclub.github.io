@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Contact Request: {{ contact_email }}</title>
+    </head>
+<body style="padding: 30px; flex:1; flex-direction:column; background-color:#222222; color:#888888">
+    <h3 style="margin-bottom:10px; color: #999999">A contact request was submitted! Here's the details:</h3>
+    <p style="margin-bottom:5px; color: #888888"><b>From:</b> {{ contact_email }}</p>
+    <p style="white-space: pre-wrap; color: #888888">{{ contact_message }}</p>
+</body>
+</html>

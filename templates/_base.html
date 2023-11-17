@@ -70,7 +70,11 @@
 		});
 
 		document.addEventListener("DOMContentLoaded", (event) => {
-			fetch("https://contact_us.{{ domain }}/contact")
+			var contact_us_error = document.getElementById("contact_us_error");
+			fetch("https://contact_us.{{ domain }}/contact", {
+				method: 'GET',
+				credentials: 'include'
+			})
 			.then((response) => {
 				if (response.ok) {
 					return response.text();
@@ -80,6 +84,33 @@
 			.then((content) => {
 				var csrf_input = document.getElementById("contact_us_csrf");
 				csrf_input.value = content;
+
+				contact_us_form.addEventListener("submit", (event) => {
+					event.preventDefault();
+		
+					var formData = new FormData(contact_us_form);
+					console.log(formData);
+
+					contact_us_form.reset();
+
+					fetch("https://contact_us.{{ domain }}/contact", {
+						method: "POST",
+						credentials: "include",
+						body: formData
+					})
+					.then((response) => {
+						if (response.ok) {
+							var success_msg = document.getElementById("contact_us_success");
+							success_msg.classList.remove("hidden");
+							contact_us_error.classList.add("hidden");
+							return;
+						}
+						throw new Error("Unable to submit contact us form");
+					})
+					.catch(error => {
+						contact_us_error.classList.remove("hidden");
+					})
+				});
 			})
 			.catch(error => {
 				console.log(error);
@@ -87,15 +118,11 @@
 				for (var i = 0, len = elements.length; i < len; i++) {
 					elements[i].disabled = true;
 				}
-				var contact_us_error = document.getElementById("contact_us_error");
 				contact_us_error.classList.remove("hidden");
 			});
 		});
 
-		contact_us_form.addEventListener("submit", (event) => {
-			console.log("submitted");
-			event.preventDefault();
-		});
+
 	</script>
 
     {% block footer_js %}{% endblock %}

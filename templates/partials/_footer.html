@@ -16,21 +16,22 @@
                     <td>Justin Boone</td>
                 </tr>
                 <tr>
-                    <td>Secretary</td>
-                    <td>Lee</td>
+                    <td>Treasurer</td>
+                    <td>Jia Dwyer</td>
                 </tr>
                 <tr>
-                    <td>Treasurer</td>
-                    <td>UNK</td>
+                    <td>Secretary</td>
+                    <td>Jay Lee</td>
                 </tr>
+
             </tbody>
         </table>
         
 
-        <form action="https://contact_us.{{ domain }}/contact" id="contact_us_form" class="flex-grow" method="POST">
+        <form id="contact_us_form" class="flex-grow"">
             <p class="font-medium mb-2">Contact Us</p>
 
-            <p id="contact_us_error" class="font-light text-red-500 hidden">This is not available right now, try again later.</p>
+            <p id="contact_us_error" class="font-light text-red-500 hidden mb-2">This is not available right now, try again later.</p>
 
             <input id="contact_us_csrf" type="hidden" name="csrf_token" value=""/>
             
@@ -39,12 +40,15 @@
                     <input required type="email" name="contact_us_email" class="disabled:opacity-25 self-stretch block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-600 valid:border-blue-500 [&:not(:placeholder-shown)]:invalid:border-red-500 focus:outline-none focus:ring-0 peer" placeholder=" " />
                     <label for="contact_us_email" class="peer-disabled:opacity-25 absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0  peer-valid:text-blue-500 peer-[:not(:placeholder-shown)]:peer-invalid:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Email</label>
                 </div> 
-                <div class="relative z-0">
+                <div class="relative z-0 mt-1">
                     <textarea required type="text" rows="3" cols="40" name="contact_us_message" class="disabled:opacity-25 resize-none block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-600 valid:border-blue-500 [&:not(:placeholder-shown)]:invalid:border-red-500 focus:outline-none focus:ring-0 peer" placeholder=" " ></textarea>
-                    <label for="contact_us_message" class="peer-disabled:opacity-25 absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0  peer-valid:text-blue-500 peer-[:not(:placeholder-shown)]:peer-invalid:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Message</label>
+                    <label for="contact_us_message" class="peer-disabled:opacity-25 absolute text-sm text-gray-400 duration-300 transform -translate-y-8 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0  peer-valid:text-blue-500 peer-[:not(:placeholder-shown)]:peer-invalid:text-red-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-8 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Message</label>
                 </div> 
            
-                <button class="disabled:opacity-25 bg-sky-700 hover:bg-sky-600 text-neutral-200 rounded-md flex-shrink px-4 py-1">Send</button>
+                <div class="flex flex-row justify-between items-center self-stretch">
+                    <button class="disabled:opacity-25 bg-sky-700 hover:bg-sky-600 text-neutral-200 rounded-md flex-shrink px-4 py-1">Send</button>
+                    <p id="contact_us_success" class="text-green-600 mr-4 drop-shadow-glow shadow-green-600 hidden">Thank you for reaching out!</p>
+                </div>
             </div>
         </form>
     </div>
