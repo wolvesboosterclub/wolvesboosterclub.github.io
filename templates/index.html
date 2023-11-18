@@ -3,27 +3,93 @@
 {% block body %}
 
 <div class="flex flex-col flex-grow p-10 gap-10 text-gray-300">
-    {% set container_style = "bg-neutral-800 p-5 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2" %}
+    {% set container_style = "relative flex flex-col bg-neutral-800 p-5 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2" %}
     <div class="flex flex-col lg:flex-row flex-wrap gap-10">
         <div class="flex flex-grow flex-col">
             <p class="text-2xl m-2 mb-0 ml-5  shadow-half-clear-white drop-shadow-glow">News</p>
             <div class="{{ container_style }}">
-                
+                <p id="no_news_label" class="text-center opacity-50">There doesn't seem to be any news</p>
+                {% with spinner_id="spinner_news" %}
+                    {% include "partials/_spinner.html" %}
+                {% endwith %}
             </div>
         </div>
         <div class="flex flex-grow flex-col">
             <p class="text-2xl m-2 mb-0 ml-5  shadow-half-clear-white drop-shadow-glow">Events</p>
             <div class="{{ container_style }}">
-                
+                <p id="no_events_label" class="text-center opacity-50">There doesn't seem to be any events</p>
+                {% with spinner_id="spinner_events" %}
+                    {% include "partials/_spinner.html" %}
+                {% endwith %}
             </div>
         </div>
     </div>
     <div class="flex flex-col">
         <p class="text-2xl m-2 mb-0 ml-5 shadow-half-clear-white drop-shadow-glow">Gallery</p>
         <div class="{{ container_style }}">
-            
+            <p id="no_gallery_label" class="text-center opacity-50">There doesn't seem to be any pictures</p>
+            {% with spinner_id="spinner_gallery" %}
+                {% include "partials/_spinner.html" %}
+            {% endwith %}
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block footer_js %}
+<script>
+
+    const spinner_news = document.getElementById("spinner_news");
+    const spinner_events = document.getElementById("spinner_events");
+    const spinner_gallery = document.getElementById("spinner_gallery");
+    const no_news_label = document.getElementById("no_news_label");
+    const no_events_label = document.getElementById("no_events_label");
+    const no_gallery_label = document.getElementById("no_gallery_label");
+
+    fetch("https://api.github.com/repos/wolvesboosterclub/wolvesboosterclub.github.io/contents/", {
+        method: "GET"
+    }).then((resp) => {
+        if (resp.ok) {
+            return resp.json();
+        }
+        throw new Error("Unable to get listing from GitHub");
+    }).then((contents) => {
+        for(let i = 0, len = contents.length; i < len; i++) {
+            var entry = contents[i];
+            if (entry.type === "dir") {
+                if (entry.name === "news") {
+                    console.log("Found news");
+                    no_news_label.classList.add("hidden");
+                } else if (entry.name === "events" ) {
+                    console.log("Found events");
+                    no_events_label.classList.add("hidden");
+                } else if (entry.name === "gallery") {
+                    console.log("Found gallery");
+                    no_gallery_label.classList.add("hidden");
+                }
+            }
+        }
+        if (!spinner_news.classList.contains("hidden")) {
+            no_news_label.classList.remove("opacity-50");
+        }
+        if (!spinner_events.classList.contains("hidden")) {
+            no_events_label.classList.remove("opacity-50");
+        }
+        if (!spinner_gallery.classList.contains("hidden")) {
+            no_gallery_label.classList.remove("opacity-50");
+        }
+        spinner_news.classList.add("hidden");
+        spinner_events.classList.add("hidden");
+        spinner_gallery.classList.add("hidden");
+    }).catch((err) => {
+        console.log(err);
+        spinner_news.classList.add("hidden");
+        spinner_events.classList.add("hidden");
+        spinner_gallery.classList.add("hidden");
+        no_news_label.classList.remove("opacity-50");
+        no_events_label.classList.remove("opacity-50");
+        no_gallery_label.classList.remove("opacity-50");
+    });
+
+</script>
 {% endblock %}
