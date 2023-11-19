@@ -266,6 +266,25 @@
     const no_events_label = document.getElementById("no_events_label");
     const no_gallery_label = document.getElementById("no_gallery_label");
 
+    var events = [];
+    var news = [];
+    var gallery = [];
+
+    function generateNews() {
+
+    }
+
+    function generateEvents() {
+        var eventPreviewHTML = `<div class="flex flex-grow text-gray-400">
+    
+</div>`
+
+    }
+
+    function generateGallery() {
+
+    }
+
     fetch("https://api.github.com/repos/wolvesboosterclub/wolvesboosterclub.github.io/contents/", {
         method: "GET"
     }).then((resp) => {
@@ -277,15 +296,68 @@
         for(let i = 0, len = contents.length; i < len; i++) {
             var entry = contents[i];
             if (entry.type === "dir") {
+                var url = entry.url;
                 if (entry.name === "news") {
-                    console.log("Found news");
-                    no_news_label.classList.add("hidden");
+                    fetch(url, {
+                        method: "GET"
+                    }).then((resp) => {
+                        if (resp.ok)
+                            return resp.json();
+                        throw new Error("Unable to get listing of news from GitHub");
+                    }).then((newsListings) => {
+
+                    }).catch((err) => {
+                        console.log(err);
+
+                    })
                 } else if (entry.name === "events" ) {
-                    console.log("Found events");
-                    no_events_label.classList.add("hidden");
+                    fetch(url, {
+                        method: "GET"
+                    }).then((resp) => {
+                        if (resp.ok)
+                            return resp.json();
+                        throw new Error("Unable to get listing of events from GitHub");
+                    }).then((eventListings) => {
+                        for(let j = 0, lenj = eventListings.length; j < lenj; j++) {
+                            if (!eventListings[j].download_url.endsWith(".json"))
+                                continue;
+                            fetch(eventListings[j].download_url, {
+                                method: "GET"
+                            }).then((resp) => {
+                                if (resp.ok)
+                                    return resp.json()
+                                throw new Error("Unable to get event listing: " + eventListings[j].name);
+                            }).then((eventListing) => {
+                                const startDate = new Date(eventListing.start_datetime);
+                                var endDate = null;
+                                if (Object.hasOwn(eventListing, "end_datetime")) {
+                                    endDate = new Date(eventListing.end_datetime);
+                                }
+                                const now = new Date();
+                                console.log(startDate, endDate, now);
+                                events.push(eventListing);
+                                generateEvents();
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
                 } else if (entry.name === "gallery") {
-                    console.log("Found gallery");
-                    no_gallery_label.classList.add("hidden");
+                    fetch(url, {
+                        method: "GET"
+                    }).then((resp) => {
+                        if (resp.ok)
+                            return resp.json();
+                        throw new Error("Unable to get listing of gallery from GitHub");
+                    }).then((galleryListings) => {
+                        
+                    }).catch((err) => {
+                        console.log(err);
+
+                    })
                 }
             }
         }
