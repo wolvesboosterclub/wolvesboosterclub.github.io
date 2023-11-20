@@ -3,37 +3,64 @@
 {% block body %}
 
 <div class="flex flex-col flex-grow p-10 gap-10 text-gray-300">
-    {% set container_style = "relative flex flex-col bg-neutral-800 p-5 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2" %}
+    {% set container_style = "relative flex flex-col bg-neutral-800 justify-center p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2" %}
     <div class="flex flex-col lg:flex-row flex-wrap gap-10">
         <div class="flex flex-grow flex-col">
             <p class="text-2xl m-2 mb-0 ml-5  shadow-half-clear-white drop-shadow-glow">News</p>
             <div class="{{ container_style }}">
-                <p id="no_news_label" class="text-center opacity-50">There doesn't seem to be any news</p>
+                <p id="no_news_label" class="text-center opacity-50 m-2">There doesn't seem to be any news</p>
                 {% with spinner_id="spinner_news" %}
                     {% include "partials/_spinner.html" %}
                 {% endwith %}
+                <div id="news-container" class="bg-green-700">
+
+                </div>
             </div>
         </div>
         <div class="flex flex-grow flex-col">
             <p class="text-2xl m-2 mb-0 ml-5  shadow-half-clear-white drop-shadow-glow">Events</p>
             <div class="{{ container_style }}">
-                <p id="no_events_label" class="text-center opacity-50">There doesn't seem to be any events</p>
+                <p id="no_events_label" class="text-center opacity-50 m-2">There doesn't seem to be any events</p>
                 {% with spinner_id="spinner_events" %}
                     {% include "partials/_spinner.html" %}
                 {% endwith %}
+                <div id="events-container" class="[&>*:not(:last-child)]:border-b-[1px]">
+
+                </div>
+                <template id="event_template">
+                    <a href="/" class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer">
+                        <div class="flex flex-col text-center mr-4 border-2 border-gray-700 rounded-xl p-3">
+                            <p class="day_of_week text-xs uppercase">SUNDAY</p>
+                            <p class="date font-medium text-2xl whitespace-nowrap uppercase">07</p>
+                            <p class="month_year text-xs uppercase whitespace-nowrap">JUNE 2023</p>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="title font-medium text-lg">Title</p>
+                            <p class="description">Short Description</p>
+                        </div>
+                        <div class="flex-grow-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-3">
+
+                        </div>
+                    </a>
+                </template>
             </div>
         </div>
     </div>
     <div class="flex flex-col">
         <p class="text-2xl m-2 mb-0 ml-5 shadow-half-clear-white drop-shadow-glow">Gallery</p>
         <div class="{{ container_style }}">
-            <p id="no_gallery_label" class="text-center opacity-50">There doesn't seem to be any pictures</p>
+            <p id="no_gallery_label" class="text-center opacity-50 m-2">There doesn't seem to be any pictures</p>
             {% with spinner_id="spinner_gallery" %}
                 {% include "partials/_spinner.html" %}
             {% endwith %}
+            <div id="gallery-container" class="bg-red-700">
+
+            </div>
         </div>
     </div>
 </div>
+
+
 {% endblock %}
 
 {% block footer_js %}
@@ -42,124 +69,201 @@
     const spinner_news = document.getElementById("spinner_news");
     const spinner_events = document.getElementById("spinner_events");
     const spinner_gallery = document.getElementById("spinner_gallery");
+
     const no_news_label = document.getElementById("no_news_label");
     const no_events_label = document.getElementById("no_events_label");
     const no_gallery_label = document.getElementById("no_gallery_label");
+
+    const events_contianer = document.getElementById("events-container");
+    const news_container = document.getElementById("news-container");
+    const gallery_container = document.getElementById("gallery-container");
+
+    const events_template = document.getElementById("event_template");
 
     var events = [];
     var news = [];
     var gallery = [];
 
-    function generateNews() {
-
+    function getDayOfWeek(date) {
+        const dayOfWeek = new Date(date).getDay();    
+        return isNaN(dayOfWeek) ? null : 
+          ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek];
     }
 
-    function generateEvents() {
-        var eventPreviewHTML = `{% include "partials/_event_preview.html" %}`
+    function getMonthOfYear(date, short=false) {
+        const monthOfYear = new Date(date).getMonth();
+        if (isNaN(monthOfYear))
+            return null;
 
+        var month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
+            'August', 'September', 'October', 'November', 'December'][monthOfYear];
+        if (short) 
+            return month.slice(0, 3);
+        else
+            return month;
     }
 
-    function generateGallery() {
-
-    }
-
-    fetch("https://api.github.com/repos/wolvesboosterclub/wolvesboosterclub.github.io/contents/", {
-        method: "GET"
-    }).then((resp) => {
-        if (resp.ok) {
-            return resp.json();
-        }
-        throw new Error("Unable to get listing from GitHub");
-    }).then((contents) => {
-        for(let i = 0, len = contents.length; i < len; i++) {
-            var entry = contents[i];
-            if (entry.type === "dir") {
-                var url = entry.url;
-                if (entry.name === "news") {
-                    fetch(url, {
-                        method: "GET"
-                    }).then((resp) => {
-                        if (resp.ok)
-                            return resp.json();
-                        throw new Error("Unable to get listing of news from GitHub");
-                    }).then((newsListings) => {
-
-                    }).catch((err) => {
-                        console.log(err);
-
-                    })
-                } else if (entry.name === "events" ) {
-                    fetch(url, {
-                        method: "GET"
-                    }).then((resp) => {
-                        if (resp.ok)
-                            return resp.json();
-                        throw new Error("Unable to get listing of events from GitHub");
-                    }).then((eventListings) => {
-                        for(let j = 0, lenj = eventListings.length; j < lenj; j++) {
-                            if (!eventListings[j].download_url.endsWith(".json"))
+    function getGitHubListing(filematch, directory="") {
+        
+        if (document.cookie.includes("wbc_githubAPI_" + directory + "=")) {
+            return new Promise((resolve, reject) => {
+                const cookies = decodeURIComponent(document.cookie).split(';');
+                for(var cookie of cookies) {
+                    if (cookie.includes("wbc_githubAPI_" + directory + "=")) {
+                        const entries = JSON.parse(atob(cookie.split('=', 2)[1]));
+                        var files = [];
+        
+                        for(var entry of entries) {
+                            if (!entry.name.match(filematch))
                                 continue;
-                            fetch(eventListings[j].download_url, {
-                                method: "GET"
-                            }).then((resp) => {
-                                if (resp.ok)
-                                    return resp.json()
-                                throw new Error("Unable to get event listing: " + eventListings[j].name);
-                            }).then((eventListing) => {
-                                const startDate = new Date(eventListing.start_datetime);
-                                var endDate = null;
-                                if (Object.hasOwn(eventListing, "end_datetime")) {
-                                    endDate = new Date(eventListing.end_datetime);
-                                }
-                                const now = new Date();
-                                console.log(startDate, endDate, now);
-                                events.push(eventListing);
-                                generateEvents();
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+        
+                            files.push(entry);
                         }
-                    }).catch((err) => {
-                        console.log(err);
-                    })
-                } else if (entry.name === "gallery") {
-                    fetch(url, {
-                        method: "GET"
-                    }).then((resp) => {
-                        if (resp.ok)
-                            return resp.json();
-                        throw new Error("Unable to get listing of gallery from GitHub");
-                    }).then((galleryListings) => {
-                        
-                    }).catch((err) => {
-                        console.log(err);
-
-                    })
+                        resolve(files);
+                    }
                 }
+                reject("Cookie seemed to contain previous information for directory " + 
+                    directory + " but was unable to parse the entries");
+            });
+        }
+        
+        return fetch("{{ githubAPI }}" + directory, {
+            method: "GET"
+        }).then((resp) => {
+            if (resp.ok) {
+                return resp.json();
             }
-        }
-        if (!spinner_news.classList.contains("hidden")) {
-            no_news_label.classList.remove("opacity-50");
-        }
-        if (!spinner_events.classList.contains("hidden")) {
+            throw new Error("Unable to find directory listings at " + "{{ githubAPI }}" + directory);
+        }).then((contents) => {
+
+            var listings = [];
+            var files = [];
+            for(let i = 0, len = contents.length; i < len; i++) {
+                var entry = contents[i];
+
+                listings.push({
+                    name: entry.name,
+                    download_url: entry.download_url
+                })
+
+                if (!entry.name.match(filematch)) 
+                    continue;
+                    
+                files.push(entry);
+            }
+
+            const d = new Date();
+            d.setTime(d.getTime() + (10*60*1000));
+            document.cookie = "wbc_githubAPI_" + directory + "=" + btoa(JSON.stringify(listings)) + ";expires=" + d.toUTCString() + ";path=/;";
+
+            return files;
+        });
+    }
+
+    function regenerateEvents() {
+        console.log("regenerating events");
+        events_contianer.replaceChildren();
+        if (events.length === 0) {
             no_events_label.classList.remove("opacity-50");
+            spinner_events.classList.add("hidden");
+            return;
         }
-        if (!spinner_gallery.classList.contains("hidden")) {
-            no_gallery_label.classList.remove("opacity-50");
+
+        no_events_label.classList.add("hidden");
+
+        events.sort((ea, eb) => {
+            if (ea.start_datetime < eb.start_datetime) {
+                return -1;
+            }
+            if (ea.start_datetime > eb.start_datetime) {
+                return 1;
+            }
+            return 0;
+        });
+
+        for(let i = 0, len = events.length; i < len; i++) {
+            var event = events[i];
+            var template = events_template.content.cloneNode(true);    
+
+            const startDate = new Date(event.start_datetime);
+
+            template.querySelector("a").href = "/events?q=" + event.file;
+            template.querySelector("a > div > p.title").innerHTML = event.title;
+            template.querySelector("a > div > p.description").innerHTML = event.short_description;
+            template.querySelector("a > div > p.day_of_week").innerHTML = getDayOfWeek(startDate);
+            template.querySelector("a > div > p.date").innerHTML = startDate.getDate() + " " + getMonthOfYear(startDate, true);
+            template.querySelector("a > div > p.month_year").innerHTML = startDate.getFullYear();
+
+            events_contianer.appendChild(template);
+
         }
-        spinner_news.classList.add("hidden");
         spinner_events.classList.add("hidden");
-        spinner_gallery.classList.add("hidden");
+    }
+
+    getGitHubListing(/.json$/, "news").then((listing) => {
+
+    }).catch((err) => {
+        spinner_news.classList.add("hidden");
+        no_news_label.classList.remove("opacity-50");
+    });
+
+    getGitHubListing(/.json$/, "events").then((files) => {
+        if (files.length === 0) {
+            throw new Error("No events to show");
+        }
+
+        var shown = 0;
+        var attempted = 0;
+        for(let i = 0, len = files.length; i < len; i++) {
+            fetch(files[i].download_url, {
+                method: "GET"
+            }).then((resp) => {
+                if (resp.ok)
+                    return resp.json();
+                throw new Error("Unable to get file: " + files[i].path);
+            }).then((event) => {
+                const startDate = new Date(event.start_datetime);
+                var endDate = null;
+                if (Object.hasOwn(event, "end_datetime")) {
+                    endDate = new Date(event.end_datetime);
+                }
+                const now = new Date();
+                now.setHours(0, 0, 0, 0);
+        
+                if (startDate < now && ((endDate !== null) && (endDate >= now)))
+                    return;
+                
+                shown++;
+                event.file = files[i].name;
+                events.push(event);
+                regenerateEvents();
+
+            }).catch((err) => {
+                console.log(err);
+            }).finally(() => {
+                attempted++;
+
+                if (attempted === files.length) {
+                    if (shown === 0) {
+                        throw new Error("No events were able to be grabbed");
+                    }
+                }
+            });
+        }
     }).catch((err) => {
         console.log(err);
-        spinner_news.classList.add("hidden");
         spinner_events.classList.add("hidden");
-        spinner_gallery.classList.add("hidden");
-        no_news_label.classList.remove("opacity-50");
         no_events_label.classList.remove("opacity-50");
+    });
+
+    getGitHubListing(/(.png|.jpeg|.jpg|.gif)$/, "gallery").then((listing) => {
+
+    }).catch((err) => {
+        spinner_gallery.classList.add("hidden");
         no_gallery_label.classList.remove("opacity-50");
     });
+
+    
 
 </script>
 {% endblock %}
