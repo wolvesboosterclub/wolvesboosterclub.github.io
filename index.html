@@ -64,7 +64,7 @@
     <div class="flex flex-col lg:flex-row flex-wrap gap-10">
         <div class="flex flex-grow flex-col">
             <p class="text-2xl m-2 mb-0 ml-5  shadow-half-clear-white drop-shadow-glow">News</p>
-            <div class="relative flex flex-col bg-neutral-800 justify-center p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2">
+            <div class="relative flex flex-col bg-neutral-800 p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2">
                 <p id="no_news_label" class="text-center opacity-50 m-2">There doesn't seem to be any news</p>
                 
                     <div id="spinner_news" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
@@ -78,11 +78,17 @@
                 <div id="news-container" class="bg-green-700">
 
                 </div>
+                <template id="news_template">
+                    <a href="/" class="flex flex-grow flex-col items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer">
+                        <p class="title font-medium">This is test news</p>
+                        <p class="description">This is a test description that may take up more space</p>
+                    </a>
+                </template>
             </div>
         </div>
         <div class="flex flex-grow flex-col">
             <p class="text-2xl m-2 mb-0 ml-5  shadow-half-clear-white drop-shadow-glow">Events</p>
-            <div class="relative flex flex-col bg-neutral-800 justify-center p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2">
+            <div class="relative flex flex-col bg-neutral-800 p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2">
                 <p id="no_events_label" class="text-center opacity-50 m-2">There doesn't seem to be any events</p>
                 
                     <div id="spinner_events" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
@@ -117,7 +123,7 @@
     </div>
     <div class="flex flex-col">
         <p class="text-2xl m-2 mb-0 ml-5 shadow-half-clear-white drop-shadow-glow">Gallery</p>
-        <div class="relative flex flex-col bg-neutral-800 justify-center p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2">
+        <div class="relative flex flex-col bg-neutral-800 p-3 flex-grow shadow-xl shadow-black rounded-xl border-neutral-700 border-2">
             <p id="no_gallery_label" class="text-center opacity-50 m-2">There doesn't seem to be any pictures</p>
             
                 <div id="spinner_gallery" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
@@ -299,6 +305,7 @@
     const news_container = document.getElementById("news-container");
     const gallery_container = document.getElementById("gallery-container");
 
+    const news_template = document.getElementById("news_template");
     const events_template = document.getElementById("event_template");
 
     var events = [];
@@ -381,8 +388,42 @@
         });
     }
 
+    function regenerateNews() {
+        news_container.replaceChildren();
+        if (news.length === 0) {
+            no_news_label.classList.remove("opacity-50");
+            spinner_news.classList.add("hidden");
+            return;
+        }
+
+        no_news_label.classList.add("hidden");
+
+        news.sort((na, nb) => {
+            if (na.date < nb.date) {
+                return 1;
+            }
+            if (na.date > nb.date) {
+                return -1;
+            }
+            return 0;
+        });
+
+        for(let i = 0, len = news.length; i < len; i++) {
+            var _news = news[i];
+            var template = news_template.content.cloneNode(true);    
+
+            const date = new Date(_news.date);
+
+            template.querySelector("a").href = "/news?q=" + _news.file;
+            template.querySelector("a > p.title").innerHTML = _news.title;
+            template.querySelector("a > p.description").innerHTML = _news.short_description;
+            
+            news_container.appendChild(template);
+        }
+        spinner_news.classList.add("hidden");
+    }
+
     function regenerateEvents() {
-        console.log("regenerating events");
         events_contianer.replaceChildren();
         if (events.length === 0) {
             no_events_label.classList.remove("opacity-50");
@@ -421,9 +462,39 @@
         spinner_events.classList.add("hidden");
     }
 
-    getGitHubListing(/.json$/, "news").then((listing) => {
+    getGitHubListing(/.json$/, "news").then((files) => {
+        if (files.length === 0) {
+            throw new Error("No news to show");
+        }
 
+        var shown = 0;
+        var attempted = 0;
+        for(let i = 0, len = files.length; i < len; i++) {
+            fetch(files[i].download_url, {
+                method: "GET"
+            }).then((resp) => {
+                if (resp.ok)
+                    return resp.json();
+                throw new Error("Unable to get file: " + files[i].path);
+            }).then((_news) => {
+                shown++;
+                _news.file = files[i].name;
+                news.push(_news);
+                regenerateNews();
+            }).catch((err) => {
+                console.log(err);
+            }).finally(() => {
+                attempted++;
+
+                if (attempted === files.length) {
+                    if (shown === 0) {
+                        throw new Error("No news were able to be grabbed");
+                    }
+                }
+            });
+        }
     }).catch((err) => {
+        console.log(err);
         spinner_news.classList.add("hidden");
         no_news_label.classList.remove("opacity-50");
     });
@@ -451,7 +522,7 @@
                 const now = new Date();
                 now.setHours(0, 0, 0, 0);
         
-                if (startDate < now && ((endDate !== null) && (endDate >= now)))
+                if (startDate < now || ((endDate !== null) && (endDate < now)))
                     return;
                 
                 shown++;
