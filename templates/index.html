@@ -21,7 +21,7 @@
                             <p class="title font-medium">This is test news</p>
                             <p class="description text-sm">This is a test description that may take up more space</p>
                         </div>
-                        <div class="flex-grow-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45"></div>
+                        <div class="flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
                     </a>
                 </template>
             </div>
@@ -47,7 +47,7 @@
                             <p class="title font-medium text-lg">Title</p>
                             <p class="description">Short Description</p>
                         </div>
-                        <div class="flex-grow-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-3"></div>
+                        <div class="flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
                     </a>
                 </template>
             </div>
@@ -268,6 +268,8 @@
 
                 if (attempted === files.length) {
                     if (shown === 0) {
+                        spinner_news.classList.add("hidden");
+                        no_news_label.classList.remove("opacity-50");
                         throw new Error("No news were able to be grabbed");
                     }
                 }
@@ -317,6 +319,8 @@
 
                 if (attempted === files.length) {
                     if (shown === 0) {
+                        spinner_events.classList.add("hidden");
+                        no_events_label.classList.remove("opacity-50");
                         throw new Error("No events were able to be grabbed");
                     }
                 }
@@ -328,9 +332,38 @@
         no_events_label.classList.remove("opacity-50");
     });
 
-    getGitHubListing(/(.png|.jpeg|.jpg|.gif)$/, "gallery").then((listing) => {
+    getGitHubListing(/(.png|.jpeg|.jpg|.gif)$/, "gallery").then((files) => {
+        if (files.length === 0) {
+            throw new Error("No gallery images to show");
+        }
 
+        var shown = 0;
+        var attempted = 0;
+        for(let i = 0, len = files.length; i < len; i++) {
+            fetch(files[i].download_url, {
+                method: "GET"
+            }).then((resp) => {
+                if (resp.ok)
+                    return resp.blob();
+                throw new Error("Unable to get file: " + files[i].path);
+            }).then((image) => {
+                
+            }).catch((err) => {
+                console.log(err);
+            }).finally(() => {
+                attempted++;
+
+                if (attempted === files.length) {
+                    if (shown === 0) {
+                        spinner_gallery.classList.add("hidden");
+                        no_gallery_label.classList.remove("opacity-50");
+                        throw new Error("No gallery images were able to be grabbed");
+                    }
+                }
+            });
+        }
     }).catch((err) => {
+        console.log(err);
         spinner_gallery.classList.add("hidden");
         no_gallery_label.classList.remove("opacity-50");
     });

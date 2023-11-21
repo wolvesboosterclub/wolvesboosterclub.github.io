@@ -44,13 +44,13 @@
     <a href="/holiday_party/" class="broadway-text text-lg text-yellow-600 tracking-widest shadow-yellow-600 hover:drop-shadow-glow transition">
         Holiday Party
     </a>
-    <div id="nav-bar-dropdown" class="block lg:hidden overflow-hidden transition-all ease-in-out duration-300 bg-gray-200 text-gray-700 absolute left-0 right-0 top-full">
+    <div id="nav-bar-dropdown" class="block overflow-hidden transition-all ease-in-out duration-300 bg-gray-200 text-gray-700 absolute left-0 right-0 top-full">
         <div class="p-2 flex flex-col [&>*:not(:last-child)]:border-b-2">
             
-            <a href="/news/" class="border-gray-300 p-2 font-medium hover:bg-gray-300">
+            <a href="/" class="border-gray-300 p-2 font-medium hover:bg-gray-600 text-gray-600 hover:text-gray-300">
                 News
             </a>
-            <a href="/events/" class="border-gray-300 p-2 font-medium hover:bg-gray-300">
+            <a href="/" class="border-gray-300 p-2 font-medium hover:bg-gray-600 text-gray-600 hover:text-gray-300">
                 Events
             </a>
         </div>
@@ -128,6 +128,7 @@
 		var contact_us_form = document.getElementById("contact_us_form");
 
 		navbarDropdown.style.maxHeight = "0px";
+		navbarDropdown.classList.add("lg:hidden");
 
 		function toggleNavbarDropdown(show = null) {
 			if (show === null) {

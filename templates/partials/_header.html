@@ -11,13 +11,13 @@
     <a href="/holiday_party/" class="broadway-text text-lg text-yellow-600 tracking-widest shadow-yellow-600 hover:drop-shadow-glow transition">
         Holiday Party
     </a>
-    <div id="nav-bar-dropdown" class="block lg:hidden overflow-hidden transition-all ease-in-out duration-300 bg-gray-200 text-gray-700 absolute left-0 right-0 top-full">
+    <div id="nav-bar-dropdown" class="block overflow-hidden transition-all ease-in-out duration-300 bg-gray-200 text-gray-700 absolute left-0 right-0 top-full">
         <div class="p-2 flex flex-col [&>*:not(:last-child)]:border-b-2">
-            {% set link_style = "border-gray-300 p-2 font-medium hover:bg-gray-300" %}
-            <a href="/news/" class="{{ link_style }}">
+            {% set link_style = "border-gray-300 p-2 font-medium hover:bg-gray-600 text-gray-600 hover:text-gray-300" %}
+            <a href="/" class="{{ link_style }}">
                 News
             </a>
-            <a href="/events/" class="{{ link_style }}">
+            <a href="/" class="{{ link_style }}">
                 Events
             </a>
         </div>

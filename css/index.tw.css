@@ -18,7 +18,6 @@ html, body {
     src: url("/holiday_party/fonts/broadway_engraved_regular/broadway_engraved_regular.otf") format("opentype");
 }
 
-
 .broadway-text {
     font-family: 'Broadway Engraved Regular';
 }
