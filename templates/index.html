@@ -1,5 +1,15 @@
 {% extends '_base.html' %}
+
 {% block title %}Home{% endblock %}
+{% block header_description %}See recent news and upcoming events for the Wolves Booster Club{% endblock %}
+{% block header_keywords %}wolves,booster,club,events,news,council{% endblock %}
+{% block header_prev_image %}/images/booster_club_logo_transparent.png{% endblock %}
+{% block header_prev_color %}#777777{% endblock %}
+
+{% block header_js %}
+<script src="/js/githubAPI.js"></script>
+{% endblock %}
+
 {% block body %}
 
 <div class="flex flex-col flex-grow p-10 gap-10 text-gray-300">
@@ -12,16 +22,16 @@
                 {% with spinner_id="spinner_news" %}
                     {% include "partials/_spinner.html" %}
                 {% endwith %}
-                <div id="news-container" class="">
+                <div id="news-container">
 
                 </div>
                 <template id="news_template">
-                    <a href="/" class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer pr-3">
+                    <a class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer pr-3">
                         <div class="flex flex-col flex-grow">
                             <p class="title font-medium">This is test news</p>
                             <p class="description text-sm">This is a test description that may take up more space</p>
                         </div>
-                        <div class="flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
+                        <div class="hidden flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
                     </a>
                 </template>
             </div>
@@ -37,7 +47,7 @@
 
                 </div>
                 <template id="event_template">
-                    <a href="/" class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer">
+                    <a class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer">
                         <div class="flex flex-col text-center mr-4 border-2 border-gray-700 rounded-xl p-3">
                             <p class="day_of_week text-xs uppercase">SUNDAY</p>
                             <p class="date font-medium text-2xl whitespace-nowrap uppercase">07</p>
@@ -47,7 +57,7 @@
                             <p class="title font-medium text-lg">Title</p>
                             <p class="description">Short Description</p>
                         </div>
-                        <div class="flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
+                        <div class="hidden flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
                     </a>
                 </template>
             </div>
@@ -66,7 +76,6 @@
         </div>
     </div>
 </div>
-
 
 {% endblock %}
 
@@ -111,62 +120,7 @@
             return month;
     }
 
-    function getGitHubListing(filematch, directory="") {
-        
-        if (document.cookie.includes("wbc_githubAPI_" + directory + "=")) {
-            return new Promise((resolve, reject) => {
-                const cookies = decodeURIComponent(document.cookie).split(';');
-                for(var cookie of cookies) {
-                    if (cookie.includes("wbc_githubAPI_" + directory + "=")) {
-                        const entries = JSON.parse(atob(cookie.split('=', 2)[1]));
-                        var files = [];
-        
-                        for(var entry of entries) {
-                            if (!entry.name.match(filematch))
-                                continue;
-        
-                            files.push(entry);
-                        }
-                        resolve(files);
-                    }
-                }
-                reject("Cookie seemed to contain previous information for directory " + 
-                    directory + " but was unable to parse the entries");
-            });
-        }
-        
-        return fetch("{{ githubAPI }}" + directory, {
-            method: "GET"
-        }).then((resp) => {
-            if (resp.ok) {
-                return resp.json();
-            }
-            throw new Error("Unable to find directory listings at " + "{{ githubAPI }}" + directory);
-        }).then((contents) => {
-
-            var listings = [];
-            var files = [];
-            for(let i = 0, len = contents.length; i < len; i++) {
-                var entry = contents[i];
-
-                listings.push({
-                    name: entry.name,
-                    download_url: entry.download_url
-                })
-
-                if (!entry.name.match(filematch)) 
-                    continue;
-                    
-                files.push(entry);
-            }
-
-            const d = new Date();
-            d.setTime(d.getTime() + (10*60*1000));
-            document.cookie = "wbc_githubAPI_" + directory + "=" + btoa(JSON.stringify(listings)) + ";expires=" + d.toUTCString() + ";path=/;";
-
-            return files;
-        });
-    }
+    
 
     function regenerateNews() {
         news_container.replaceChildren();
@@ -194,7 +148,7 @@
 
             const date = new Date(_news.date);
 
-            template.querySelector("a").href = "/news?q=" + _news.file;
+            //template.querySelector("a").href = "/news?q=" + _news.file;
             template.querySelector("a > div > p.title").innerHTML = _news.title;
             template.querySelector("a > div > p.description").innerHTML = _news.short_description;
             
@@ -229,7 +183,10 @@
 
             const startDate = new Date(event.start_datetime);
 
-            template.querySelector("a").href = "/events?q=" + event.file;
+            //template.querySelector("a").href = "/events?q=" + event.file;
+            if (Object.hasOwn(event, "link")) {
+                tempalte.querySelector("a").href = event.link;
+            }
             template.querySelector("a > div > p.title").innerHTML = event.title;
             template.querySelector("a > div > p.description").innerHTML = event.short_description;
             template.querySelector("a > div > p.day_of_week").innerHTML = getDayOfWeek(startDate);

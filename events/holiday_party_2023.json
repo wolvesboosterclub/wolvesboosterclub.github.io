@@ -2,12 +2,13 @@
     "title": "The Wolves Great Gatsby Holiday Party",
     "start_datetime": "2023-12-08T18:00-05:00",
     "end_datetime": "2023-12-08T21:00-05:00",
-    "short_description": "Come out and celebrate The Great Gatsby!",
-    "description": "This is a test event<br/>And this is a second paragraph of text that might contain more information",
+    "short_description": "6pm-9pm | Come out and celebrate The Great Gatsby!",
+    "description": "More information to come",
     "manning": {
         "needed": 125, 
-        "attending": 38
+        "attending": 31
     },
+    "link": "/holiday_party/",
     "linked_gallery_images": [
         "art-deco-background.jpg"
     ],

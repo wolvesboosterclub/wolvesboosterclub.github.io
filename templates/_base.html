@@ -1,5 +1,4 @@
 {% set domain = "wolvesboosterclub.org" %}
-{% set githubAPI = "https://api.github.com/repos/wolvesboosterclub/wolvesboosterclub.github.io/contents/" %}
 {% set url = 'https://' + domain %}
 <!DOCTYPE html>
 <html lang="en" class="flex flex-col">
@@ -10,7 +9,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta property="og:type" content="website" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta property="og:title" content="{{ self.title() }}" />
+	<meta property="og:title" content="{{ self.title() }} | Wolves Booster Club" />
 
 	<meta name="description" content="{% block header_description %}{% endblock %}">
 	<meta name="keywords" content="{% block header_keywords %}{% endblock %}">
@@ -18,13 +17,9 @@
 	<meta property="og:url" content="{{ url }}{% block header_url %}{% endblock %}" />
 	<meta property="og:image"
 		content="{{ url }}{% block header_prev_image %}{% endblock %}" />
-	<!-- Include this to make the og:image larger -->
 	<meta property="og:description"
 		content="{{ self.header_description() }}" />
 	<meta name="theme-color" content="{% block header_prev_color %}{% endblock %}" />
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;500;700&display=swap" rel="stylesheet">
 	<link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/css/index.css"/>
     {% block extra_css %}{% endblock %}

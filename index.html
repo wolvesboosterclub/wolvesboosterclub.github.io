@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="en" class="flex flex-col">
 <head>
@@ -10,25 +9,23 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta property="og:type" content="website" />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta property="og:title" content="Home" />
+	<meta property="og:title" content="Home | Wolves Booster Club" />
 
-	<meta name="description" content="">
-	<meta name="keywords" content="">
+	<meta name="description" content="See recent news and upcoming events for the Wolves Booster Club">
+	<meta name="keywords" content="wolves,booster,club,events,news,council">
 
 	<meta property="og:url" content="https://wolvesboosterclub.org" />
 	<meta property="og:image"
-		content="https://wolvesboosterclub.org" />
-	<!-- Include this to make the og:image larger -->
+		content="https://wolvesboosterclub.org/images/booster_club_logo_transparent.png" />
 	<meta property="og:description"
-		content="" />
-	<meta name="theme-color" content="" />
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300;500;700&display=swap" rel="stylesheet">
+		content="See recent news and upcoming events for the Wolves Booster Club" />
+	<meta name="theme-color" content="#777777" />
 	<link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/css/index.css"/>
     
     
+<script src="/js/githubAPI.js"></script>
+
 </head>
 <body class="flex flex-col flex-grow">
     <nav class="relative bg-neutral-950 flex items-center justify-between p-3 shadow-lg shadow-black z-10 gap-10">
@@ -75,16 +72,16 @@
     <span class="sr-only">Loading...</span>
 </div>
                 
-                <div id="news-container" class="">
+                <div id="news-container">
 
                 </div>
                 <template id="news_template">
-                    <a href="/" class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer pr-3">
+                    <a class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer pr-3">
                         <div class="flex flex-col flex-grow">
                             <p class="title font-medium">This is test news</p>
                             <p class="description text-sm">This is a test description that may take up more space</p>
                         </div>
-                        <div class="flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
+                        <div class="hidden flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
                     </a>
                 </template>
             </div>
@@ -106,7 +103,7 @@
 
                 </div>
                 <template id="event_template">
-                    <a href="/" class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer">
+                    <a class="flex flex-grow flex-row items-center text-gray-400 p-2 border-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer">
                         <div class="flex flex-col text-center mr-4 border-2 border-gray-700 rounded-xl p-3">
                             <p class="day_of_week text-xs uppercase">SUNDAY</p>
                             <p class="date font-medium text-2xl whitespace-nowrap uppercase">07</p>
@@ -116,7 +113,7 @@
                             <p class="title font-medium text-lg">Title</p>
                             <p class="description">Short Description</p>
                         </div>
-                        <div class="flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
+                        <div class="hidden flex-shrink-0 content-none border-t-4 border-r-4 border-gray-500 w-5 h-5 rotate-45 mr-2"></div>
                     </a>
                 </template>
             </div>
@@ -141,7 +138,6 @@
         </div>
     </div>
 </div>
-
 
 
 	</div>
@@ -333,62 +329,7 @@
             return month;
     }
 
-    function getGitHubListing(filematch, directory="") {
-        
-        if (document.cookie.includes("wbc_githubAPI_" + directory + "=")) {
-            return new Promise((resolve, reject) => {
-                const cookies = decodeURIComponent(document.cookie).split(';');
-                for(var cookie of cookies) {
-                    if (cookie.includes("wbc_githubAPI_" + directory + "=")) {
-                        const entries = JSON.parse(atob(cookie.split('=', 2)[1]));
-                        var files = [];
-        
-                        for(var entry of entries) {
-                            if (!entry.name.match(filematch))
-                                continue;
-        
-                            files.push(entry);
-                        }
-                        resolve(files);
-                    }
-                }
-                reject("Cookie seemed to contain previous information for directory " + 
-                    directory + " but was unable to parse the entries");
-            });
-        }
-        
-        return fetch("https://api.github.com/repos/wolvesboosterclub/wolvesboosterclub.github.io/contents/" + directory, {
-            method: "GET"
-        }).then((resp) => {
-            if (resp.ok) {
-                return resp.json();
-            }
-            throw new Error("Unable to find directory listings at " + "https://api.github.com/repos/wolvesboosterclub/wolvesboosterclub.github.io/contents/" + directory);
-        }).then((contents) => {
-
-            var listings = [];
-            var files = [];
-            for(let i = 0, len = contents.length; i < len; i++) {
-                var entry = contents[i];
-
-                listings.push({
-                    name: entry.name,
-                    download_url: entry.download_url
-                })
-
-                if (!entry.name.match(filematch)) 
-                    continue;
-                    
-                files.push(entry);
-            }
-
-            const d = new Date();
-            d.setTime(d.getTime() + (10*60*1000));
-            document.cookie = "wbc_githubAPI_" + directory + "=" + btoa(JSON.stringify(listings)) + ";expires=" + d.toUTCString() + ";path=/;";
-
-            return files;
-        });
-    }
+    
 
     function regenerateNews() {
         news_container.replaceChildren();
@@ -416,7 +357,7 @@
 
             const date = new Date(_news.date);
 
-            template.querySelector("a").href = "/news?q=" + _news.file;
+            //template.querySelector("a").href = "/news?q=" + _news.file;
             template.querySelector("a > div > p.title").innerHTML = _news.title;
             template.querySelector("a > div > p.description").innerHTML = _news.short_description;
             
@@ -451,7 +392,10 @@
 
             const startDate = new Date(event.start_datetime);
 
-            template.querySelector("a").href = "/events?q=" + event.file;
+            //template.querySelector("a").href = "/events?q=" + event.file;
+            if (Object.hasOwn(event, "link")) {
+                tempalte.querySelector("a").href = event.link;
+            }
             template.querySelector("a > div > p.title").innerHTML = event.title;
             template.querySelector("a > div > p.description").innerHTML = event.short_description;
             template.querySelector("a > div > p.day_of_week").innerHTML = getDayOfWeek(startDate);
